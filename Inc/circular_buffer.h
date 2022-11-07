@@ -13,7 +13,7 @@
 typedef uint8_t __type;
 //#define __type			double
 
-#define RAM_START_ADDRESS (uint32_t)(0x60000000 + 0x1000 )//FSMC_NORSRAM_EXTENDED_DEVICE 0x11C
+#define RAM_START_ADDRESS (uint32_t)(0x60000000 )//FSMC_NORSRAM_EXTENDED_DEVICE 0x11C + 0x1000
 
 typedef struct
 {

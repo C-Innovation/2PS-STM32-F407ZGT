@@ -58,7 +58,15 @@ uint32_t ramTestAddress = RAM_START_ADDRESS;
 //uint8_t ramTestBuffRead[RAM_CIRCULAR_BUFF_SIZE] = {0};
 
 Ci_CircularBufferTypeDef MainCircularBuff = {0};
-uint8_t MainUartBuff[UART_BUFF_SIZE] = {0};
+volatile uint8_t MainUartBuff[UART_BUFF_SIZE] = {0};
+
+FATFS fs;
+FIL File;
+FIL sFile;
+FRESULT fres;
+FILINFO info;
+DIR dir;
+HAL_StatusTypeDef rc;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -117,7 +125,14 @@ int main(void)
   /* USER CODE BEGIN 2 */
   MainCircularBuff = ci_circular_buffer_new_instance();
   MainCircularBuff.Begin(RAM_CIRCULAR_BUFF_SIZE);
-
+  for(int i = 0; i < UART_BUFF_SIZE; i++)
+    MainUartBuff[i] = (uint8_t)i;
+  MainCircularBuff.PushBackArray(&MainUartBuff[0], UART_BUFF_SIZE);
+  for(int i = 0; i < UART_BUFF_SIZE; i++)
+  {
+      MainUartBuff[i] = MainCircularBuff.Front();
+      MainCircularBuff.PopFront();
+  }
   HAL_UART_Receive_DMA(&huart1, &MainUartBuff[0], UART_BUFF_SIZE);
 
   /* USER CODE END 2 */

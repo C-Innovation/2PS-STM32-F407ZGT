@@ -93,7 +93,7 @@ static void PushBack(__type item)
 	else
 	{
 		//__buffer[__end] = item;
-	  pWriteBytes(&hsram1, &pAdr, &item, 1);
+	  pWriteBytes(&hsram1, pAdr, &item, 1);
 		__end = _increment(__end);
 		__size++;
 	}
@@ -113,7 +113,7 @@ static void PushFront(__type item)
 	{
 		__start = _decrement(__start);
 		//__buffer[__start] = item;
-		pWriteBytes(&hsram1, &pAdr, &item, 1);
+		pWriteBytes(&hsram1, pAdr, &item, 1);
 		__size++;
 	}
 }
@@ -135,17 +135,17 @@ static void PushBackArray(__type *items, uint32_t len)
     if((len + __end) >= __capacity)
     {
       //memcpy(&__buffer[__end], &items[0], (__capacity - __end));
-      pWriteBytes(&hsram1, &pAdr, &items[0], (__capacity - __end));
+      pWriteBytes(&hsram1, pAdr, &items[0], (__capacity - __end));
       //memcpy(&__buffer[0], &items[(__capacity - __end)], (len - (__capacity - __end)));
       pAdr = RAM_START_ADDRESS;
-      pWriteBytes(&hsram1, &pAdr, &items[(__capacity - __end)], (len - (__capacity - __end)));
+      pWriteBytes(&hsram1, pAdr, &items[(__capacity - __end)], (len - (__capacity - __end)));
       __end = (len - (__capacity - __end));
       __size += len;
     }
     else
     {
      // memcpy(&__buffer[__end], items, len);
-      pWriteBytes(&hsram1, &pAdr, &items[0], len);
+      pWriteBytes(&hsram1, pAdr, &items[0], len);
       __end += len;
       __size += len;
     }
@@ -216,7 +216,7 @@ static __type Front()
     return 0;
   }
   __type out = 0;
-  pReadBytes(&hsram1, &pAdr, &out, 1);
+  pReadBytes(&hsram1, pAdr, &out, 1);
 	return out;
 }
 
@@ -231,7 +231,7 @@ static __type Back()
     return 0;
   }
   __type out = 0;
-   pReadBytes(&hsram1, &pAdr, &out, 1);
+   pReadBytes(&hsram1, pAdr, &out, 1);
 	return out;
 }
 
@@ -253,16 +253,16 @@ static __type* FrontArray(uint32_t len)
   if((__start + len) >= __capacity)
   {
     //memcpy(&outBuf[0], &__buffer[__start], (__capacity - __start));
-    pReadBytes(&hsram1, &pAdr, &outBuf[0], (__capacity - __start));
+    pReadBytes(&hsram1, pAdr, &outBuf[0], (__capacity - __start));
     //memcpy(&outBuf[(__capacity - __start)], &__buffer[0], (len - (__capacity - __start)));
     pAdr = RAM_START_ADDRESS;
-    pReadBytes(&hsram1, &pAdr, &outBuf[(__capacity - __start)], (len - (__capacity - __start)));
+    pReadBytes(&hsram1, pAdr, &outBuf[(__capacity - __start)], (len - (__capacity - __start)));
   }
   else
   {
     //memcpy(outBuf, &__buffer[__start], len);
 
-    pReadBytes(&hsram1, &pAdr, outBuf, len);
+    pReadBytes(&hsram1, pAdr, outBuf, len);
   }
   return outBuf;
 }
@@ -284,7 +284,7 @@ static __type ItemFrom(uint32_t index)
   }
   uint32_t pAdr = (((index + __start) < __capacity) ? (index + __start) : ((index + __start) - __capacity)) + RAM_START_ADDRESS;
   __type out = 0;
-  pReadBytes(&hsram1, &pAdr, &out, 1);
+  pReadBytes(&hsram1, pAdr, &out, 1);
   return out;
 }
 
@@ -354,13 +354,13 @@ static void pWriteBytes(SRAM_HandleTypeDef *hsram, uint32_t *pAddress, uint8_t *
   __IO uint8_t *psramaddress = (uint8_t *)pAddress;
 
   uint8_t *psrcbuff = pSrcBuffer;
-
+  __HAL_LOCK(hsram);
   for (size = BufferSize; size != 0U; size--)
   {
     *psramaddress = *psrcbuff;
     psrcbuff++;
     psramaddress++;
   }
-
+  __HAL_UNLOCK(hsram);
 }
 

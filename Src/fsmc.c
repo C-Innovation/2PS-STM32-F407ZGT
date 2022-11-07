@@ -53,7 +53,7 @@ void MX_FSMC_Init(void)
   hsram1.Init.WaitSignalPolarity = FSMC_WAIT_SIGNAL_POLARITY_LOW;
   hsram1.Init.WrapMode = FSMC_WRAP_MODE_DISABLE;
   hsram1.Init.WaitSignalActive = FSMC_WAIT_TIMING_BEFORE_WS;
-  hsram1.Init.WriteOperation = FSMC_WRITE_OPERATION_DISABLE;
+  hsram1.Init.WriteOperation = FSMC_WRITE_OPERATION_ENABLE;
   hsram1.Init.WaitSignal = FSMC_WAIT_SIGNAL_DISABLE;
   hsram1.Init.ExtendedMode = FSMC_EXTENDED_MODE_DISABLE;
   hsram1.Init.AsynchronousWait = FSMC_ASYNCHRONOUS_WAIT_DISABLE;
@@ -61,12 +61,12 @@ void MX_FSMC_Init(void)
   hsram1.Init.PageSize = FSMC_PAGE_SIZE_NONE;
   hsram1.Init.ContinuousClock = FSMC_CONTINUOUS_CLOCK_SYNC_ONLY;
   /* Timing */
-  Timing.AddressSetupTime = 2;//15;
-  Timing.AddressHoldTime = 1;//15;
-  Timing.DataSetupTime = 2;//255;
-  Timing.BusTurnAroundDuration = 1;//15;
-  Timing.CLKDivision = 2;//16;
-  Timing.DataLatency = 2;//17;
+  Timing.AddressSetupTime = 8;//8;//15;
+  Timing.AddressHoldTime = 2;//2;//15;
+  Timing.DataSetupTime = 4;//4;//255;
+  Timing.BusTurnAroundDuration = 15;//1;//15;
+  Timing.CLKDivision = 0;//0;//16;
+  Timing.DataLatency = 0;//0;//17;
   Timing.AccessMode = FSMC_ACCESS_MODE_A;
   /* ExtTiming */
 
