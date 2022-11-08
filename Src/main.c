@@ -37,12 +37,13 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
-#define RAM_CIRCULAR_BUFF_SIZE    32768
-#define UART_BUFF_SIZE            128
+
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define ID_UART                     0xA
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -56,9 +57,9 @@
 uint32_t ramTestAddress = RAM_START_ADDRESS;
 //uint8_t ramTestBuffWrite[RAM_CIRCULAR_BUFF_SIZE] = {0};
 //uint8_t ramTestBuffRead[RAM_CIRCULAR_BUFF_SIZE] = {0};
-
+DeviseStatus WorkStatus;
 Ci_CircularBufferTypeDef MainCircularBuff = {0};
-volatile uint8_t MainUartBuff[UART_BUFF_SIZE] = {0};
+volatile uint8_t MainUartBuff[UART_BUFFER_SIZE] ={0};
 
 FATFS fs;
 FIL File;
@@ -67,6 +68,7 @@ FRESULT fres;
 FILINFO info;
 DIR dir;
 HAL_StatusTypeDef rc;
+extern char USERPath[4];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -120,21 +122,30 @@ int main(void)
   MX_TIM5_Init();
   MX_USART1_UART_Init();
   MX_FATFS_Init();
-  MX_USB_DEVICE_Init();
+
 
   /* USER CODE BEGIN 2 */
   MainCircularBuff = ci_circular_buffer_new_instance();
-  MainCircularBuff.Begin(RAM_CIRCULAR_BUFF_SIZE);
-  for(int i = 0; i < UART_BUFF_SIZE; i++)
-    MainUartBuff[i] = (uint8_t)i;
-  MainCircularBuff.PushBackArray(&MainUartBuff[0], UART_BUFF_SIZE);
-  for(int i = 0; i < UART_BUFF_SIZE; i++)
+  MainCircularBuff.Begin(RAM_SIZE);
+  if (ExternRAM_Test() == EXTERN_RAM_OK)                        // проверка ОЗУ
   {
-      MainUartBuff[i] = MainCircularBuff.Front();
-      MainCircularBuff.PopFront();
+    WorkStatus.FLag.ERAMCW = SET;                               // установить флаг исправности ОЗУ
+    LED1_GPIO_Port->BSRR = LED1_Pin;                            // включаем индикацию исправности ОЗУ
   }
-  HAL_UART_Receive_DMA(&huart1, &MainUartBuff[0], UART_BUFF_SIZE);
 
+  if((GPIOA->IDR & GPIO_PIN_9))
+  {
+    MX_USB_DEVICE_Init();
+  }
+  else
+  {
+    // TODO: Add USB_HOST initialization
+
+    //**********************************
+  }
+//  fres = f_mount(&fs, &USERPath[0], 1);
+//  fres = f_open(&File, "test.txt", FA_READ | FA_WRITE | FA_CREATE_ALWAYS);
+//  fres = f_close(&File);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -198,11 +209,21 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
   if(huart->Instance == USART1)
   {
-    // TODO: Add Handle CR_BUFF for Array!!!!
-    for(int i = 0; i < UART_BUFF_SIZE; i++)
-      MainCircularBuff.PushBack(MainUartBuff[i]);
 
-    HAL_UART_Receive_DMA(&huart1, &MainUartBuff[0], UART_BUFF_SIZE);
+//     TODO: Add Handle CR_BUFF for Array!!!!
+//    for(int i = 0; i < UART_BUFFER_SIZE; i++)
+//      MainCircularBuff.PushBack(MainUartBuff[i]);
+    SaveDataUART _pStr =
+    {
+        .lengh[0] = sizeof(SaveDataUART),
+        .lengh[1] = sizeof(SaveDataUART) >> 8,
+        .ID = ID_UART,
+        .channel = 0
+    };
+    memcpy(&_pStr.data[0], &MainUartBuff[0], UART_BUFFER_SIZE);
+    MainCircularBuff.PushBackArray((uint8_t*)&_pStr, sizeof(SaveDataUART));
+
+    HAL_UART_Receive_DMA(&huart1, &MainUartBuff[0], UART_BUFFER_SIZE);
   }
 }
 /* USER CODE END 4 */

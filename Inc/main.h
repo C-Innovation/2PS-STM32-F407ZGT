@@ -36,6 +36,51 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+typedef struct
+{
+  FlagStatus RD :1;                    //0 регистрация данных
+  FlagStatus SDAvailable :1;           //1 карта установлена
+  FlagStatus SDTrain :1;               //2 карта готова к использованию
+  FlagStatus TS :1;                    //3 синхронизация времени
+  FlagStatus FLE :1;                   //4 загрузка прошивки
+  FlagStatus TM :1;                    //5 технологический режим
+  FlagStatus LP :1;                    //6 потеря питания
+  FlagStatus FCNE :1;                  //7 прошивка не прошла проверку контрольной суммы
+  FlagStatus EthTO :1;                 //8 пора отправить данные из буфера
+  FlagStatus EthBO :1;                 //9 в буфере много данных
+  FlagStatus FW :1;                    //10 работает альтернативный стек, прошивка разгружена
+  FlagStatus SF :1;                    //11 найден сервер
+  FlagStatus ELA :1;                   //12 сетевой кабель подсоединен
+  FlagStatus ERD :1;                   //13 был прием по сети
+  FlagStatus RSS :1;                   //14 сброс системных служб
+  FlagStatus FT :1;                    //15 файл подготовлен для записи
+  FlagStatus RFS :1;                   //16 требуется повторить поиск сервера
+  FlagStatus ESF1 :1;                  //17 формат передачи по сетевому интерфейсу
+  FlagStatus HSE :1;                   //18 произведен запуск с внешним генератором
+  FlagStatus LSE :1;                   //19 произведен запуск с внешним низкочастотным генератором
+  FlagStatus HSEE :1;                  //20 произведен запуск кварца эзернета
+  FlagStatus ERAMCW :1;                //21 внешнее ОЗУ исправно
+  FlagStatus LE :1;                    //22 логирование включено
+  FlagStatus ISD :1;                   //23 внутренная карта готова
+  FlagStatus EFU :1;                   //24 ошибка в файле обновления
+  FlagStatus FWE :1;                   //25 можно писать прошивку
+  FlagStatus EROMCW :1;                //26 внешнее ПЗУ исправно
+  FlagStatus USBAvailable :1;          //27 кабель USB подключен
+  FlagStatus NU2 :4;
+} FLDeviseStatus;
+
+typedef union
+{
+  FLDeviseStatus FLag;
+  uint32_t REG;
+} DeviseStatus;
+
+typedef enum
+{
+  HSE_OK = 0,
+  HSI_OK,
+  CPU_ERROR
+} CPU_Status;
 
 /* USER CODE END ET */
 

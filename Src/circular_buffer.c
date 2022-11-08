@@ -354,13 +354,79 @@ static void pWriteBytes(SRAM_HandleTypeDef *hsram, uint32_t *pAddress, uint8_t *
   __IO uint8_t *psramaddress = (uint8_t *)pAddress;
 
   uint8_t *psrcbuff = pSrcBuffer;
-  __HAL_LOCK(hsram);
+  //__HAL_LOCK(hsram);
   for (size = BufferSize; size != 0U; size--)
   {
     *psramaddress = *psrcbuff;
     psrcbuff++;
     psramaddress++;
   }
-  __HAL_UNLOCK(hsram);
+  //__HAL_UNLOCK(hsram);
+}
+
+ExternRAM_Status ExternRAM_Test()
+{
+  uint8_t i, res = EXTERN_RAM_OK;
+  uint32_t *adr32;
+  //HAL_Delay(250);
+  /* адресный тест */
+  /* запись */
+  adr32 = (uint32_t *)RAM_START_ADDRESS;
+  i = 0;
+  while ((uint32_t)adr32 <= RAM_END_ADDRESS)
+  {
+    *adr32 = i + (i << 16);
+    i++;
+    adr32++;
+  }
+  //HAL_Delay(250);
+//  adr32 = (uint32_t *)START_ADR_SD_BUF;
+//  i = 0;
+//  while ((uint32_t)adr32 <= END_ADR_SD_BUF)
+//  {
+//    *adr32 = i + (i << 16);
+//    i++;
+//    adr32++;
+//  }
+  /* проверка */
+  adr32 = (uint32_t *)RAM_START_ADDRESS;
+  i = 0;
+  while ((uint32_t)adr32 <= RAM_END_ADDRESS)
+  {
+    if ((i + (i << 16)) != *adr32)
+    {
+      res |= ERROR_ETH_BUF_RAM;
+      break;
+    }
+    i++;
+    adr32++;
+  }
+//  adr32 = (uint32_t *) START_ADR_SD_BUF;
+//  i = 0;
+//  while ((uint32_t) adr32 <= END_ADR_SD_BUF)
+//  {
+//    if ((i + (i << 16)) != *adr32)
+//    {
+//      res |= ERROR_SD_BUF_RAM;
+//      break;
+//    }
+//    i++;
+//    adr32++;
+//  }
+  ExternRAM_Erase();          // стирание памяти на всякий случай
+
+  return res;
+}
+
+void ExternRAM_Erase()
+{
+  uint32_t *adr32 = (uint32_t *)RAM_START_ADDRESS;
+
+  while ((uint32_t)adr32 <= RAM_END_ADDRESS)
+  {
+    *adr32 = 0;
+    adr32++;
+  }
+
 }
 
