@@ -29,7 +29,7 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "stm32f4xx_hal_mmc.h"
 /* USER CODE END Includes */
 
 extern MMC_HandleTypeDef hmmc;

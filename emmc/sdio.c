@@ -21,7 +21,7 @@
 #include "sdio.h"
 
 /* USER CODE BEGIN 0 */
-
+#include "stm32f4xx_hal_mmc.h"
 /* USER CODE END 0 */
 
 MMC_HandleTypeDef hmmc;

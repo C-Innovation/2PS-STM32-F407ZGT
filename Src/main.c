@@ -21,7 +21,6 @@
 #include "adc.h"
 #include "dma.h"
 #include "fatfs.h"
-#include "sdio.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -31,6 +30,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "sdio.h"
 #include "circular_buffer.h"
 /* USER CODE END Includes */
 
@@ -113,7 +113,6 @@ int main(void)
   MX_DMA_Init();
   MX_UART4_Init();
   MX_ADC1_Init();
-  MX_SDIO_MMC_Init();
   MX_FSMC_Init();
   MX_SPI1_Init();
   MX_SPI2_Init();
@@ -122,11 +121,13 @@ int main(void)
   MX_TIM5_Init();
   MX_USART1_UART_Init();
   MX_FATFS_Init();
-
-
+  //MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
+  MX_SDIO_MMC_Init();
+
   MainCircularBuff = ci_circular_buffer_new_instance();
   MainCircularBuff.Begin(RAM_SIZE);
+
   if (ExternRAM_Test() == EXTERN_RAM_OK)                        // проверка ОЗУ
   {
     WorkStatus.FLag.ERAMCW = SET;                               // установить флаг исправности ОЗУ

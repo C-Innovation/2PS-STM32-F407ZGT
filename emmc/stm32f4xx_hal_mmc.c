@@ -255,7 +255,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
-
+#include "stm32f4xx_hal_mmc.h"
 /** @addtogroup STM32F4xx_HAL_Driver
   * @{
   */
@@ -264,7 +264,7 @@
   * @{
   */
 
-#ifdef HAL_MMC_MODULE_ENABLED
+//#ifdef HAL_MMC_MODULE_ENABLED
 
 #if defined(STM32F405xx) || defined(STM32F415xx) || defined(STM32F407xx) || defined(STM32F417xx) || \
     defined(STM32F427xx) || defined(STM32F437xx) || defined(STM32F429xx) || defined(STM32F439xx) || \
@@ -3075,7 +3075,7 @@ static HAL_StatusTypeDef MMC_Write_ExtCsd(MMC_HandleTypeDef *hmmc, uint8_t off, 
           STM32F401xC || STM32F401xE || STM32F411xE || STM32F446xx || STM32F469xx || STM32F479xx || STM32F412Zx || STM32F412Vx || 
           STM32F412Rx || STM32F412Cx || STM32F413xx || STM32F423xx */
 
-#endif /* HAL_MMC_MODULE_ENABLED */
+//#endif /* HAL_MMC_MODULE_ENABLED */
 
 /**
   * @}

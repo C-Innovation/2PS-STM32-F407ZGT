@@ -9,7 +9,7 @@
 #define BSP_DRIVER_MMC_H_
 
 #include "stm32f4xx_hal.h"
-
+#include "stm32f4xx_hal_mmc.h"
 #define BSP_MMC_CardInfo HAL_MMC_CardInfoTypeDef
 
 
