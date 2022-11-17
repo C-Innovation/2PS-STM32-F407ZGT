@@ -49,10 +49,10 @@ void MX_SDIO_MMC_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_MMC_ConfigWideBusOperation(&hmmc, SDIO_BUS_WIDE_8B) != HAL_OK)
-  {
-    Error_Handler();
-  }
+//  if (HAL_MMC_ConfigWideBusOperation(&hmmc, SDIO_BUS_WIDE_8B) != HAL_OK)
+//  {
+//    Error_Handler();
+//  }
   /* USER CODE BEGIN SDIO_Init 2 */
 
   /* USER CODE END SDIO_Init 2 */

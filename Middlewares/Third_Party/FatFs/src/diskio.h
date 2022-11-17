@@ -45,7 +45,7 @@ DWORD get_fattime (void);
 #define STA_NODISK		0x02	/* No medium in the drive */
 #define STA_PROTECT		0x04	/* Write protected */
 
-
+#define SD_DISK             0
 /* Command code for disk_ioctrl fucntion */
 
 /* Generic command (Used by FatFs) */

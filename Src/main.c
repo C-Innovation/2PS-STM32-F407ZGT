@@ -32,6 +32,7 @@
 /* USER CODE BEGIN Includes */
 #include "sdio.h"
 #include "circular_buffer.h"
+#include "sdwork.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,7 +60,8 @@ uint32_t ramTestAddress = RAM_START_ADDRESS;
 //uint8_t ramTestBuffRead[RAM_CIRCULAR_BUFF_SIZE] = {0};
 DeviseStatus WorkStatus;
 Ci_CircularBufferTypeDef MainCircularBuff = {0};
-volatile uint8_t MainUartBuff[UART_BUFFER_SIZE] ={0};
+volatile uint8_t MainUartBuff[2][UART_BUFFER_SIZE] ={0};
+volatile uint8_t MainUartBuffIndex = 0;
 
 FATFS fs;
 FIL File;
@@ -140,19 +142,29 @@ int main(void)
   }
   else
   {
+    SD_Train(SD_DISK);
+    SD_TrainFile();
+
+    HAL_UART_Receive_DMA(&huart1, &MainUartBuff[MainUartBuffIndex][0], UART_BUFFER_SIZE);
     // TODO: Add USB_HOST initialization
 
     //**********************************
   }
-//  fres = f_mount(&fs, &USERPath[0], 1);
-//  fres = f_open(&File, "test.txt", FA_READ | FA_WRITE | FA_CREATE_ALWAYS);
-//  fres = f_close(&File);
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    if(!(GPIOA->IDR & GPIO_PIN_9))
+    {
+      if(!MainCircularBuff.IsEmpty())
+      {
+        SD_WriteData(&MainCircularBuff, 0);
+      }
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -206,14 +218,14 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   if(huart->Instance == USART1)
   {
+    uint8_t lastInd = MainUartBuffIndex;
+    MainUartBuffIndex = (MainUartBuffIndex == 0) ? 1 : 0;
+    HAL_UART_Receive_DMA(&huart1, &MainUartBuff[MainUartBuffIndex][0], UART_BUFFER_SIZE);
 
-//     TODO: Add Handle CR_BUFF for Array!!!!
-//    for(int i = 0; i < UART_BUFFER_SIZE; i++)
-//      MainCircularBuff.PushBack(MainUartBuff[i]);
     SaveDataUART _pStr =
     {
         .lengh[0] = sizeof(SaveDataUART),
@@ -221,10 +233,10 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
         .ID = ID_UART,
         .channel = 0
     };
-    memcpy(&_pStr.data[0], &MainUartBuff[0], UART_BUFFER_SIZE);
+    memcpy(&_pStr.data[0], &MainUartBuff[lastInd][0], UART_BUFFER_SIZE);
     MainCircularBuff.PushBackArray((uint8_t*)&_pStr, sizeof(SaveDataUART));
 
-    HAL_UART_Receive_DMA(&huart1, &MainUartBuff[0], UART_BUFFER_SIZE);
+
   }
 }
 /* USER CODE END 4 */

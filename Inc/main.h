@@ -111,7 +111,9 @@ void Error_Handler(void);
 #define LED4_Pin GPIO_PIN_7
 #define LED4_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
-
+#define ID_VENDOR               {'F', 'l', 't', 'r', ' ', 'K', 'T', 'V'}    // 8 символов
+#define PRODUCT_ID              {'P', 'e', 'n', 'c', 'i', 'l', ' ', 'M', 'S', 'D', '\0', '\0', '\0', '\0', '\0', '\0'}     // 16 символов
+#define PRODUCT_REV             {'1', '.', '3', '0'}       // 4 символа
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

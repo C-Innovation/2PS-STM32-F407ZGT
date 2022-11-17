@@ -37,7 +37,7 @@ extern UART_HandleTypeDef huart4;
 extern UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN Private defines */
-
+#define UART_BAUD_RATE              115200 * 4
 /* USER CODE END Private defines */
 
 void MX_UART4_Init(void);
